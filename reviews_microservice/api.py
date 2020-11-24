@@ -22,17 +22,23 @@ def handle_exception(error: Exception):
 user_review_model = api.model(
     "User review model",
     {
-        "id": fields.Integer(readonly=True, description="The review identifier"),
+        "id": fields.Integer(
+            readonly=True, required=True, description="The review identifier"
+        ),
         "reviewer_id": fields.Integer(
-            description="The unique identifier of the reviewer"
+            required=True, description="The unique identifier of the reviewer"
         ),
         "reviewee_id": fields.Integer(
-            description="The unique identifier of the reviewee"
+            required=True, description="The unique identifier of the reviewee"
+        ),
+        "booking_id": fields.Integer(
+            requried=True,
+            description="The unique identifier of the booking the review belongs to",
         ),
         "score": fields.Integer(
-            description="The score between 1 (lowest) and 4 (highest)."
+            required=True, description="The score between 1 (lowest) and 4 (highest)."
         ),
-        "comment": fields.Integer(description="An optional comment"),
+        "comment": fields.Integer(required=False, description="An optional comment"),
     },
 )
 
