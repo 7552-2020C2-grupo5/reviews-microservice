@@ -4,6 +4,7 @@ from reviews_microservice import __version__
 import logging
 from reviews_microservice.models import db, UserReview
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql import func
 import reqparse
 from reviews_microservice.utils import FilterParam
 import operator as ops
@@ -52,6 +53,16 @@ user_review_with_timestamp_model = api.inherit(
     {"timestamp": fields.DateTime(description="The moment the review was created at")},
 )
 
+reviewee_score_model = api.model(
+    "Reviewee score model",
+    {
+        "reviewee_id": fields.Integer(
+            description="The unique identifier for the reviewee"
+        ),
+        "score_avg": fields.Float(description="The score average, possibly normalized"),
+    },
+)
+
 
 user_review_parser = reqparse.RequestParser()
 user_review_model.add_argument(
@@ -75,7 +86,7 @@ user_review_model.add_argument(
 
 
 @api.route("/review/user")
-class UserReviewModel(Resource):
+class UserReviewResource(Resource):
     @api.doc("list_user_review")
     @api.marshal_list_with(user_review_with_timestamp_model)
     @api.expect(user_review_parser)
@@ -103,3 +114,24 @@ class UserReviewModel(Resource):
             return new_user_review
         except IntegrityError:
             return {"message": "Review has already been created"}, 409
+
+
+@api.route("/score/user/<int:reviewee_id>")
+class UserReviewRevieweeResource(Resource):
+    @api.doc("get_reviewee_score")
+    @api.marshal_list_with(reviewee_score_model)
+    def get(self, reviewee_id):
+        """Get score for reviewee."""
+        if (
+            UserReview.query.filter(UserReview.reviewee_id == reviewee_id).first()
+            is None
+        ):
+            return {"message": "There are no reviews regarding requested reviewee"}, 200
+        score_avg = (
+            UserReview.query.with_entities(
+                func.avg(UserReview.score).label("score_avg")
+            )
+            .filter(UserReview.reviewee_id == reviewee_id)
+            .scalar()
+        )
+        return {"reviewee_id": reviewee_id, "score_avg": score_avg}
