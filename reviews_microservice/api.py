@@ -1,5 +1,6 @@
 """API module."""
 from flask_restx import Api, Resource, fields, reqparse
+from flask import abort as flask_abort
 from reviews_microservice import __version__
 import logging
 from reviews_microservice.models import db, UserReview
@@ -122,33 +123,35 @@ class UserReviewResource(Resource):
 
     @api.doc("create_user_review")
     @api.expect(user_review_create_parser)
-    @api.response(200, "Successfully created", model=user_review_model)
+    @api.response(200, "Successfully created")
     @api.response(400, "Bad request")
     @api.response(409, "Already created")
+    @api.marshal_with(user_review_model)
     def post(self):
         """Create a new user review."""
         try:
             new_user_review = UserReview(**api.payload)
             db.session.add(new_user_review)
             db.session.commit()
-            return api.marshal(new_user_review, user_review_model), 200
+            return new_user_review
         except IntegrityError:
-            return {"message": "Review has already been created"}, 409
+            return flask_abort(409, "Review has already been created")
         except ValueError:
-            return {"message": "Score must be between 1 and 4"}, 400
+            return flask_abort(400, "Score must be between 1 and 4")
 
 
 @api.route("/score/user/<int:reviewee_id>")
 class UserReviewRevieweeResource(Resource):
     @api.doc("get_reviewee_score")
-    @api.marshal_list_with(reviewee_score_model)
+    @api.response(204, "No data for user")
+    @api.response(200, "Score successfully calculated", model=reviewee_score_model)
     def get(self, reviewee_id):
         """Get score for reviewee."""
         if (
             UserReview.query.filter(UserReview.reviewee_id == reviewee_id).first()
             is None
         ):
-            return {"message": "There are no reviews regarding requested reviewee"}, 200
+            return {}, 204
         score_avg = (
             UserReview.query.with_entities(
                 func.avg(UserReview.score).label("score_avg")
@@ -156,4 +159,10 @@ class UserReviewRevieweeResource(Resource):
             .filter(UserReview.reviewee_id == reviewee_id)
             .scalar()
         )
-        return {"reviewee_id": reviewee_id, "score_avg": score_avg}
+        return (
+            api.marshal(
+                {"reviewee_id": reviewee_id, "score_avg": score_avg},
+                reviewee_score_model,
+            ),
+            200,
+        )
