@@ -17,9 +17,7 @@ class UserReview(db.Model):  # type: ignore
     timestamp = db.Column(db.DateTime, nullable=False, default=func.now())
 
     __table_args__ = (
-        db.UniqueConstraint(
-            'reviewer_id', 'booking_id', name='unique_review_for_booking'
-        ),
+        db.UniqueConstraint('booking_id', name='unique_review_for_booking'),
     )
 
     @validates("score")
