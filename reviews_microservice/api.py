@@ -4,6 +4,10 @@ from reviews_microservice import __version__
 import logging
 from reviews_microservice.models import db, UserReview
 from sqlalchemy.exc import IntegrityError
+import reqparse
+from reviews_microservice.utils import FilterParam
+import operator as ops
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -49,13 +53,41 @@ user_review_with_timestamp_model = api.inherit(
 )
 
 
+user_review_parser = reqparse.RequestParser()
+user_review_model.add_argument(
+    "booking_id",
+    store_missing=False,
+    type=FilterParam("booking_id", ops.eq),
+    help="The unique identifier for the booking",
+)
+user_review_model.add_argument(
+    "reviewer_id",
+    store_missing=False,
+    type=FilterParam("reviewer_id", ops.eq),
+    help="The unique identifier for the reviewer",
+)
+user_review_model.add_argument(
+    "reviewee_id",
+    store_missing=False,
+    type=FilterParam("reviewee_id", ops.eq),
+    help="The unique identifier of the reviewee",
+)
+
+
 @api.route("/review/user")
 class UserReviewModel(Resource):
     @api.doc("list_user_review")
     @api.marshal_list_with(user_review_with_timestamp_model)
+    @api.expect(user_review_parser)
     def get(self):
         """List all user reviews."""
-        return UserReview.query.all()
+        params = user_review_parser.parse_args()
+        query = UserReview.query
+        for _, filter_op in params.items():
+            if not isinstance(filter_op, FilterParam):
+                continue
+            query = filter_op.apply(query, UserReview)
+        return query.all()
 
     @api.doc("create_user_review")
     @api.expect(user_review_model)
