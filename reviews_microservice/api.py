@@ -17,7 +17,7 @@ api = Api(
 )
 
 api.add_namespace(users_reviews_namespace, path='/user_reviews')
-api.add_namespace(publications_reviews_namespace, path='/publication_rreviews')
+api.add_namespace(publications_reviews_namespace, path='/publication_reviews')
 
 
 @api.errorhandler
