@@ -1,17 +1,15 @@
 """Flask api."""
+import logging
 from pathlib import Path
 
 from flask import Flask
-from flask_migrate import Migrate
 from flask_cors import CORS
+from flask_migrate import Migrate
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from reviews_microservice.api import api
 from reviews_microservice.cfg import config
 from reviews_microservice.models import db
-
-from werkzeug.middleware.proxy_fix import ProxyFix
-
-import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

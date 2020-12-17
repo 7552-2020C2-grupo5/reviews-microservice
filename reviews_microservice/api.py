@@ -1,10 +1,11 @@
 """API module."""
 from flask_restx import Api
+
 from reviews_microservice import __version__
-from reviews_microservice.namespaces.users_reviews import api as users_reviews_namespace
 from reviews_microservice.namespaces.publications_reviews import (
     api as publications_reviews_namespace,
 )
+from reviews_microservice.namespaces.users_reviews import api as users_reviews_namespace
 
 api = Api(
     prefix="/v1",

@@ -1,12 +1,14 @@
 """Publications reviews namespace."""
-from flask_restx import Resource, fields, reqparse, Namespace
+import operator as ops
+
 from flask import abort as flask_abort
-from reviews_microservice import __version__
-from reviews_microservice.models import db, PublicationReview
+from flask_restx import Namespace, Resource, fields, reqparse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import func
+
+from reviews_microservice import __version__
+from reviews_microservice.models import PublicationReview, db
 from reviews_microservice.utils import FilterParam
-import operator as ops
 
 api = Namespace(
     "Publication Reviews", description="Publication reviews related operations"

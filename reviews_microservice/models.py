@@ -1,8 +1,7 @@
 """SQLAlchemy models."""
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
-
+from sqlalchemy.sql import func
 
 db = SQLAlchemy()
 
