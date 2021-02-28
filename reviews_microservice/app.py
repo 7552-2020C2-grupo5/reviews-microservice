@@ -34,19 +34,20 @@ def before_request():
         "/swaggerui/swagger-ui.css",
         "/swaggerui/droid-sans.css",
     ]
-    if config.env(default="DEV") == "DEV":
+    if (
+        config.env(default="DEV") == "DEV"
+        or request.path in excluded_paths
+        or request.method == "OPTIONS"
+    ):
         return
-    if request.path not in excluded_paths and request.method != "OPTIONS":
-        bookbnb_token = request.headers.get("BookBNB-Authorization")
-        if bookbnb_token is None:
-            return {"message": "BookBNB token is missing"}, 401
+    bookbnb_token = request.headers.get("BookBNB-Authorization")
+    if bookbnb_token is None:
+        return {"message": "BookBNB token is missing"}, 401
 
-        r = request.post(
-            config.token_verification_url(default=DEFAULT_VERIFICATION_URL)
-        )
+    r = request.post(config.token_verification_url(default=DEFAULT_VERIFICATION_URL))
 
-        if not r.ok:
-            return {"message": "Invalid BookBNB token"}, 401
+    if not r.ok:
+        return {"message": "Invalid BookBNB token"}, 401
 
 
 def create_app():
