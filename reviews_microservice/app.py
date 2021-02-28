@@ -2,12 +2,12 @@
 import logging
 from pathlib import Path
 
-from flask import Flask, request
-from flask_migrate import Migrate
 import requests
+from flask import Flask, request
+from flask_cors import CORS
+from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from flask_cors import CORS
 from reviews_microservice.api import api
 from reviews_microservice.cfg import config
 from reviews_microservice.constants import DEFAULT_VERIFICATION_URL
