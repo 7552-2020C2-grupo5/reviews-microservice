@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reviews_microservice"
-version = "0.3.2"
+version = "1.0.0"
 description = "User and booking reviews microservice for bookbnb."
 authors = ["75.52 - 2020C2 - G5 <imermet@fi.uba.ar>"]
 
@@ -21,6 +21,7 @@ flask_script = "^2.0.6"
 sqlalchemy_utils = "^0.36.8"
 psycopg2-binary = "^2.8.6"
 Flask-Cors = "^3.0.9"
+requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
 nox = "^2020.8.22"

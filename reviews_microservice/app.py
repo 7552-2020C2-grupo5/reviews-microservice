@@ -2,13 +2,15 @@
 import logging
 from pathlib import Path
 
-from flask import Flask
+import requests
+from flask import Flask, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from reviews_microservice.api import api
 from reviews_microservice.cfg import config
+from reviews_microservice.constants import DEFAULT_VERIFICATION_URL
 from reviews_microservice.models import db
 
 logger = logging.getLogger(__name__)
@@ -20,6 +22,33 @@ def fix_dialect(s):
         s = s.replace("postgres://", "postgresql://")
     s = s.replace("postgresql://", "postgresql+psycopg2://")
     return s
+
+
+def before_request():
+    excluded_paths = [
+        "/",
+        "/swaggerui/favicon-32x32.png",
+        "/swagger.json",
+        "/swaggerui/swagger-ui-standalone-preset.js",
+        "/swaggerui/swagger-ui-standalone-preset.js",
+        "/swaggerui/swagger-ui-bundle.js",
+        "/swaggerui/swagger-ui.css",
+        "/swaggerui/droid-sans.css",
+    ]
+    if (
+        config.env(default="DEV") == "DEV"
+        or request.path in excluded_paths
+        or request.method == "OPTIONS"
+    ):
+        return
+    bookbnb_token = request.headers.get("BookBNB-Authorization")
+    if bookbnb_token is None:
+        return {"message": "BookBNB token is missing"}, 401
+
+    r = requests.post(config.token_verification_url(default=DEFAULT_VERIFICATION_URL))
+
+    if not r.ok:
+        return {"message": "Invalid BookBNB token"}, 401
 
 
 def create_app():
@@ -37,4 +66,5 @@ def create_app():
     )  # remove after flask-restx > 0.2.0 is released
     # https://github.com/python-restx/flask-restx/issues/230
     CORS(new_app)
+    new_app.before_request(before_request)
     return new_app
