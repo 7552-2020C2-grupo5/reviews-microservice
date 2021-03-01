@@ -5,6 +5,7 @@ from reviews_microservice import __version__
 from reviews_microservice.namespaces.publications_reviews import (
     api as publications_reviews_namespace,
 )
+from reviews_microservice.namespaces.token import api as token_namespace
 from reviews_microservice.namespaces.users_reviews import api as users_reviews_namespace
 
 api = Api(
@@ -19,6 +20,7 @@ api = Api(
 
 api.add_namespace(users_reviews_namespace, path='/user_reviews')
 api.add_namespace(publications_reviews_namespace, path='/publication_reviews')
+api.add_namespace(token_namespace, path='/token')
 
 
 @api.errorhandler
