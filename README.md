@@ -145,6 +145,17 @@ Go to the app on the [Heroku Dashboard](https://dashboard.heroku.com). On the de
 ## Is the app running?
 Free dynos sleep after [30 min](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-sleeping) if no incoming web traffic is received. It might take a while, but you should be able to see the app's swagger the root URL. Use the "Open App" button on the dashboard.
 
+## DataDog
+The heroku Dockerfile includes the DataDog agent.
+Create a new DataDog API Key from [here](https://app.datadoghq.com/account/settings#api).
+Remember to set the following config vars:
+```bash
+heroku config:set DD_API_KEY=<your_api_key>
+heroku config:set DD_DYNO_HOST=false
+heroku config:set HEROKU_APP_NAME=bookbnb5-reviews
+heroku config:set DD_TAGS=service:reviews-microservice
+```
+
 # GitHub Actions
 A few pipelines have been set to run on github actions to ensure code quality.
 
@@ -158,4 +169,3 @@ You can visit the swagger docs at `127.0.0.1:5000`.
 
 ## Whole project class diagram
 ![project_classes](docs/images/project_classes.png)
-
