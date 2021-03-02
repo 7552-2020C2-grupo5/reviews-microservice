@@ -7,7 +7,3 @@ class ServerTokenError(Exception):
 
 class UnsetServerToken(Exception):
     pass
-
-
-class InvalidEnvironment(Exception):
-    pass
