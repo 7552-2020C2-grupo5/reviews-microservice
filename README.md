@@ -1,5 +1,5 @@
 # reviews-microservice
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/7552-2020C2-grupo5/reviews-microservice?style=flat-square)  ![Coverage](coverage-badge.svg)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/7552-2020C2-grupo5/reviews-microservice?style=flat-square) ![Coverage](coverage-badge.svg)[![Tests](https://github.com/7552-2020C2-grupo5/reviews-microservice/actions/workflows/tests.yml/badge.svg)](https://github.com/7552-2020C2-grupo5/reviews-microservice/actions/workflows/tests.yml)[![Linters](https://github.com/7552-2020C2-grupo5/reviews-microservice/actions/workflows/linters.yml/badge.svg)](https://github.com/7552-2020C2-grupo5/reviews-microservice/actions/workflows/linters.yml)[![Bandit](https://github.com/7552-2020C2-grupo5/reviews-microservice/actions/workflows/bandit.yml/badge.svg)](https://github.com/7552-2020C2-grupo5/reviews-microservice/actions/workflows/bandit.yml)![](https://heroku-badge.herokuapp.com/?app=bookbnb5-reviews)
 
 User and booking reviews microservice for bookbnb.
 
@@ -169,3 +169,6 @@ You can visit the swagger docs at `127.0.0.1:5000`.
 
 ## Whole project class diagram
 ![project_classes](docs/images/project_classes.png)
+
+## Packages
+![packages](docs/images/packages_dependencies.png)
